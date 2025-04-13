@@ -8,6 +8,9 @@ import utils.DiscordUtils as discordUtils
 import discord
 from discord.ext import commands
 
+import asyncio
+from cogs.GeminiCog import GeminiAgent
+
 intents = discord.Intents.all()
 intents.message_content = True
 intents.members = True
@@ -38,4 +41,19 @@ async def help(ctx):
     MyEmbed.add_field(name = "!pm", value = "Use this command allows you to send me a private message.", inline = False)
     await ctx.send(embed = MyEmbed)
 
+@bot.command()
+@commands.check(discordUtils.is_me)
+async def unloadGemini(ctx):
+    await bot.remove_cog('GeminiAgent')
+
+@bot.command()
+@commands.check(discordUtils.is_me)
+async def reloadGemini(ctx):
+    await bot.add_cog('GeminiAgent')
+
+
+async def start_cogs():
+    await bot.add_cog(GeminiAgent(bot))
+
+asyncio.run(start_cogs())
 bot.run(defaultConfig.discord_sdk)
